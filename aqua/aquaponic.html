@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aquaponics Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #0f2c38, #193c47);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dashboard {
+      display: flex;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-content:center;
+    }
+   
+    .card {
+      background-color: #1c3a47;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      border-radius: 20px;
+      width: 160px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 18px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-box {
+      background-color: #102c36;
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 400px;
+        height: 100px;
+    }
+
+    .control-box h3 {
+      margin: 0 0 10px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      gap: 20px;
+      
+    }
+
+
+
+    /* Toggle Switch Styles */
+    .toggle-container {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      margin-bottom:25px;
+      margin-left:20px;
+    }
+
+    .toggle-input {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .slider {
+      position: absolute;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #444;
+      border-radius: 34px;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 3.5px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    .toggle-input:checked + .slider {
+      background-color: #2ed573;
+    }
+
+    .toggle-input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .circle-button {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.circle-button.on {
+  background-color: #2ed573; /* Green when ON */
+}
+
+.circle-button.off {
+  background-color: #d63031; /* Red when OFF */
+}
+
+.circle-button:hover {
+  opacity: 0.8;
+}
+
+    .time-date {
+        font-size: 15px;
+        display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  margin-left: 100px;
+  margin-top: -50px;
+  flex-shrink: 0;}
+
+
+.time, .date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.time-date1 {
+       
+        display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  margin-right: 40px;
+  flex-shrink: 0;
+margin-bottom: 30px;}
+  
+
+
+.time1, .date1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+.value {
+  font-size: 37px;
+  margin-bottom: 25px;
+}
+.time-value {
+  font-size: 25px;
+}
+
+.date-value {
+  font-size: 25px;
+}
+.time-value1 {
+  font-size: 25px;
+}
+
+.date-value1 {
+  font-size: 25px;
+}
+
+.device-status {
+  color: green;
+  font-size: 18px;
+  margin-bottom: 500px;
+  margin-left: -1000px;
+  position: absolute;
+  background-color: #1c3a47;
+  border-radius: 20px;
+  width: 140px;
+  height: 40px;
+  
+  /* Center the text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+  </style>
+</head>
+<body>
+  <div id="device-status" class="device-status">Connected</div>
+
+  <div class="dashboard">
+    <!-- LEFT SIDE - SENSOR CARDS -->
+    <div class="cards">
+      <div class="card">
+        <div class="label">Dissolved Oxygen</div>
+  <div class="value" id="oxygen">00.0</div>
+    
+      </div>
+      <div class="card">
+        <div class="label">pH level</div>
+        <div class="value" id="ph">00.0</div>
+      
+      </div>
+      <div class="card">
+        <div class="label">Water Temperature</div>
+        <div class="value" id="temp">00.0</div>
+        
+      </div>
+      <div class="card">
+        <div class="label">Nutrient level</div>
+        <div class="value" id="nutrient">00.0</div>
+       
+      </div>
+      <div class="card">
+        <div class="label">Turbidity</div>
+        <div class="value" id="turbidity">00.0</div>
+  
+      </div>
+      <div class="card">
+        <div class="label">Water level</div>
+        <div class="value" id="water">00.0</div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE - CONTROLS -->
+    <div class="controls">
+
+      <!-- Feeding System with Circle Button -->
+      <div class="control-box">
+        <h3>FEEDING SYSTEM</h3>
+        <button class="circle-button off" id="feedButton" onclick="toggleFeed()"></button>
+        <div class="time-date">
+            <div class="time">
+              <div>TIME</div>
+              <div class="time-value">--:--</div>
+            </div>
+            <div class="date">
+              <div>DATE</div>
+              <div class="date-value">--/--/--</div>
+            </div>
+          </div>
+     
+      </div>
+
+      <!-- Standard Toggles -->
+      <div class="control-box">
+        <h3>WATER FLOW CONTROL</h3>
+        <div class="toggle-row">
+          <label class="toggle-container">
+            <input type="checkbox" class="toggle-input" >
+            <span class="slider"></span>
+          </label>
+          <div class="time-date1">
+            <div class="time1">
+              <div>TIME</div>
+              <div class="time-value1">--:--</div>
+            </div>
+            <div class="date1">
+              <div>DATE</div>
+              <div class="date-value1">--/--/--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-box">
+        <h3>AERATION CONTROL</h3>
+        <div class="toggle-row">
+          <label class="toggle-container">
+            <input type="checkbox" class="toggle-input" >
+            <span class="slider"></span>
+          </label>
+          <div class="time-date1">
+            <div class="time1">
+              <div>TIME</div>
+              <div class="time-value1">--:--</div>
+            </div>
+            <div class="date1">
+              <div>DATE</div>
+              <div class="date-value1">--/--/--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+    </div>
+  </div>
+
+ <script src="Aquaponic.js"></script>
+</body>
+</html>
