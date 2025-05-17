@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquaponics Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <span class="navbar-logo"><i class="fas fa-fish"></i></span>
+            <span class="navbar-title">Aquaponics Monitor</span>
+        </div>
+    </nav>
+    <div class="dashboard">
+        <main class="main">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon water-clarity">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            Turbidity
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="turbidity"></i>
+                        </h3>
+                        <p id="turbidity">-- NTU</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon water-level">
+                        <i class="fas fa-fill-drip"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            Water Level
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="level"></i>
+                        </h3>
+                        <p id="level">-- %</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon nutrient">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            TDSolids
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="tds"></i>
+                        </h3>
+                        <p id="nutrient">--</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon temperature">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            Water Temperature
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="temp"></i>
+                        </h3>
+                        <p id="temp">-- °C</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon ph-level">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            pH Level
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="ph"></i>
+                        </h3>
+                        <p id="ph">--</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon oxygen">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>
+                            Dissolved Oxygen
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="oxygen"></i>
+                        </h3>
+                        <p id="oxygen">-- mg/L</p>
+                        <div class="stat-range"><span class="stat-status"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="records-section">
+                <h2 class="records-title"><i class="fas fa-database"></i> All Records</h2>
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Turbidity</th>
+                            <th>Water Level</th>
+                            <th>TDS</th>
+                            <th>Temp</th>
+                            <th>pH</th>
+                            <th>Oxygen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody"></tbody>
+                </table>
+                <div class="pagination-controls">
+                    <button id="prevPage" class="pagination-btn">Previous</button>
+                    <span id="pageInfo"></span>
+                    <button id="nextPage" class="pagination-btn">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Sensor Info Modal -->
+    <div id="sensorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalSensorName"></h2>
+            <div class="modal-body">
+                <p><strong>Model:</strong> <span id="modalSensorModel"></span></p>
+                <p><strong>Detects:</strong> <span id="modalSensorDetect"></span></p>
+                <div id="modalSensorThresholds"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
