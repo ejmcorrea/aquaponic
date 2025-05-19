@@ -196,18 +196,19 @@ body {
 }
 
 .stat-info p {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 600;
-    margin-bottom: 0.75rem;
+    margin-bottom: -0.25rem;
     color: var(--text-primary);
-    letter-spacing: -0.5px;
+    letter-spacing: 1.5px;
+    margin-left: 2px;
 }
 
 .stat-range {
     font-size: 0.9rem;
     color: var(--text-secondary);
     padding: 0.5rem 1rem;
-    background: rgba(0, 0, 0, 0.03);
+   
     border-radius: 8px;
     display: inline-block;
     font-weight: 500;
@@ -392,6 +393,37 @@ body {
 .sensor-info-btn:hover {
     color: var(--primary-color);
 }
+
+.stat-status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: white;
+  display: inline-block;
+  min-width: 100px;
+  text-align: center;
+}
+
+.status-danger {
+  background-color: #e74c3c;
+}
+
+.status-warning {
+  background-color: #f39c12;
+}
+
+.status-ideal {
+  background-color: #27ae60;
+}
+
+.status-over {
+  background-color: #2980b9;
+}
+
+.status-notIdeal {
+  background-color: #8e44ad;
+}
+
 
 .modal {
     display: none;
@@ -670,6 +702,57 @@ body {
     font-size: 0.95rem;
   }
 }
+.threshold-container {
+    margin-top: 24px;
+}
+
+.threshold-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a202c; /* dark gray */
+    margin-bottom: 12px;
+}
+
+.threshold-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.threshold-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.circle-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Colors for each threshold */
+.circle-indicator.danger {
+    background-color: #f44336; /* red */
+}
+.circle-indicator.warning {
+    background-color: #ffeb3b; /* yellow */
+}
+.circle-indicator.ideal {
+    background-color: #4caf50; /* green */
+}
+.circle-indicator.over {
+    background-color: #2196f3; /* blue */
+}
+.circle-indicator.not-ideal {
+    background-color: #9c27b0; /* purple */
+}
+
+.threshold-extra {
+    margin-top: 16px;
+}
 
   </style>
 </head>
@@ -701,7 +784,7 @@ body {
                             <i class="fas fa-info-circle sensor-info-btn" data-sensor="turbidity"></i>
                         </h3>
                         <p id="turbidity">-- NTU</p>
-                        <div class="stat-range"><span class="stat-status"></span></div>
+                        <div class="stat-range"><span class="stat-status"id="status-turbidity" ></span></div>
                     </div>
                 </div>
                 
@@ -714,8 +797,8 @@ body {
                             Total Dissolved Solids
                             <i class="fas fa-info-circle sensor-info-btn" data-sensor="tds"></i>
                         </h3>
-                        <p id="tds">--</p>
-                        <div class="stat-range"><span class="stat-status"></span></div>
+                        <p id="tds">-- ppm</p>
+                        <div class="stat-range"><span class="stat-status" id="status-tds"></span></div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -725,10 +808,10 @@ body {
                     <div class="stat-info">
                         <h3>
                             Water Temperature
-                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="temp"></i>
+                            <i class="fas fa-info-circle sensor-info-btn" data-sensor="temperature"></i>
                         </h3>
                         <p id="temperature">-- °C</p>
-                        <div class="stat-range"><span class="stat-status"></span></div>
+                        <div class="stat-range"><span class="stat-status"  id="status-temperature"></span></div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -741,7 +824,7 @@ body {
                             <i class="fas fa-info-circle sensor-info-btn" data-sensor="ph"></i>
                         </h3>
                         <p id="ph">--</p>
-                        <div class="stat-range"><span class="stat-status"></span></div>
+                        <div class="stat-range"><span class="stat-status"id="status-ph"></span></div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -754,7 +837,7 @@ body {
                             <i class="fas fa-info-circle sensor-info-btn" data-sensor="oxygen"></i>
                         </h3>
                         <p id="oxygen">-- mg/L</p>
-                        <div class="stat-range"><span class="stat-status"></span></div>
+                        <div class="stat-range"><span class="stat-status" id="status-oxygen"></span></div>
                     </div>
                 </div>
                 <div class="control-card">
@@ -771,19 +854,7 @@ body {
                     </div>
                 </div>
 
-                <div class="control-card">
-                    <div class="control-icon">
-                        <i class="fas fa-tint"></i>
-                    </div>
-                    <div class="control-info">
-                        <h3>Water Pump</h3>
-                        <button class="control-btn" id="waterPumpBtn" onclick="toggleDevice('waterPump')">
-                        <i class="fas fa-power-off"></i>
-                            <span>Turn On</span>
-                        </button>
-                        <p class="status-text">Status: <span id="waterPumpStatus">Off</span></p>
-                    </div>
-                </div>
+
 
                 <div class="control-card">
                     <div class="control-icon">
@@ -831,10 +902,38 @@ body {
         <div class="modal-body">
             <p><strong>Model:</strong> <span id="modalSensorModel"></span></p>
             <p><strong>Detects:</strong> <span id="modalSensorDetect"></span></p>
-            <div id="modalSensorThresholds"></div>
+            <div class="threshold-container">
+    <h4 class="threshold-title">Threshold Levels</h4>
+    <div class="threshold-list">
+        <div class="threshold-item">
+            <span class="circle-indicator danger"></span>
+            <p><strong>Not Safe:</strong> <span id="modal-threshold-danger">--</span></p>
+        </div>
+        <div class="threshold-item">
+            <span class="circle-indicator warning"></span>
+            <p><strong>Warning:</strong> <span id="modal-threshold-warning">--</span></p>
+        </div>
+        <div class="threshold-item">
+            <span class="circle-indicator ideal"></span>
+            <p><strong>Ideal:</strong> <span id="modal-threshold-ideal">--</span></p>
+        </div>
+        <div class="threshold-item">
+            <span class="circle-indicator over"></span>
+            <p><strong>Over Ideal:</strong> <span id="modal-threshold-over">--</span></p>
+        </div>
+        <div class="threshold-item">
+            <span class="circle-indicator not-ideal"></span>
+            <p><strong>Not Ideal:</strong> <span id="modal-threshold-not-ideal">--</span></p>
+        </div>
+    </div>
+    <div id="modalSensorThresholds" class="threshold-extra"></div>
+</div>
+
+
         </div>
     </div>
 </div>
+
 
   <script>
 document.querySelectorAll('.navbar-logo, .navbar-title').forEach(element => {
@@ -861,58 +960,71 @@ function updateConnectionStatus(isConnected) {
   dot.className = 'status-dot';
   statusElem.prepend(dot);
 }
-
-
-const sensorDetails = {
-    turbidity: {
-        name: "Turbidity",
-        model: "TurbSensor-100",
-        detects: "Water clarity using NTU",
-        thresholds: [
-            { level: "Good", range: "0-5 NTU" },
-            { level: "Moderate", range: "5-10 NTU" },
-            { level: "Poor", range: "10+ NTU" }
-        ]
-    },
-    tds: {
-        name: "Total Dissolved Solids",
-        model: "TDSSensor-X2",
-        detects: "Minerals, salts, and impurities",
-        thresholds: [
-            { level: "Good", range: "0-300 ppm" },
-            { level: "Moderate", range: "300-600 ppm" },
-            { level: "Poor", range: "600+ ppm" }
-        ]
-    },
-    temp: {
-        name: "Water Temperature",
-        model: "TempPro-V5",
-        detects: "Water temperature in °C",
-        thresholds: [
-            { level: "Optimal", range: "20-28 °C" },
-            { level: "Caution", range: "28-32 °C" },
-            { level: "Danger", range: "32+ °C" }
-        ]
+const sensorInfo = {
+    temperature: {
+        name: "Water Temperature Sensor",
+        model: "DS18B20 Waterproof",
+        detects: "Water temperature in Celsius",
+        icon: "fa-thermometer-half",
+        thresholds: {
+            danger: "> 30°C or < 15°C",
+            warning: "28°C - 30°C or 15°C - 18°C",
+            ideal: "20°C - 26°C",
+            over: "26°C - 28°C",
+            notIdeal: "18°C - 20°C"
+        }
     },
     ph: {
-        name: "pH Level",
-        model: "PHMeter-A1",
-        detects: "Acidity or alkalinity of water",
-        thresholds: [
-            { level: "Ideal", range: "6.5-8.5" },
-            { level: "Acidic", range: "< 6.5" },
-            { level: "Basic", range: "> 8.5" }
-        ]
+        name: "pH Level Sensor",
+        model: "Atlas Scientific pH Kit",
+        detects: "Acidity/Alkalinity of water (pH)",
+        icon: "fa-vial",
+        thresholds: {
+            danger: "< 5.5 or > 8.5",
+            warning: "5.5 - 6.0 or 8.0 - 8.5",
+            ideal: "6.5 - 7.5",
+            over: "7.5 - 8.0",
+            notIdeal: "6.0 - 6.5"
+        }
     },
     oxygen: {
-        name: "Dissolved Oxygen",
-        model: "OxySense-M3",
-        detects: "Oxygen levels in mg/L",
-        thresholds: [
-            { level: "Good", range: "6-9 mg/L" },
-            { level: "Moderate", range: "4-6 mg/L" },
-            { level: "Low", range: "< 4 mg/L" }
-        ]
+        name: "Dissolved Oxygen Sensor",
+        model: "Atlas Scientific DO Kit",
+        detects: "Dissolved oxygen in mg/L",
+        icon: "fa-wind",
+        thresholds: {
+            danger: "< 3 mg/L",
+            warning: "3 - 4 mg/L",
+            ideal: "5 - 7 mg/L",
+            over: "7 - 8 mg/L",
+            notIdeal: "4 - 5 mg/L"
+        }
+    },
+    turbidity: {
+        name: "Turbidity Sensor",
+        model: "Gravity Analog Turbidity",
+        detects: "Water clarity in NTU",
+        icon: "fa-water",
+        thresholds: {
+            danger: "> 10 NTU",
+            warning: "5 - 10 NTU",
+            ideal: "0 - 3 NTU",
+            over: "3 - 5 NTU",
+            notIdeal: "3 - 5 NTU"
+        }
+    },
+    tds: {
+        name: "TDS Sensor",
+        model: "Gravity Analog TDS",
+        detects: "Total dissolved solids in ppm",
+        icon: "fa-flask",
+        thresholds: {
+            danger: "> 1000 ppm",
+            warning: "500 - 1000 ppm",
+            ideal: "200 - 500 ppm",
+            over: "500 - 800 ppm",
+            notIdeal: "800 - 1000 ppm"
+        }
     }
 };
 
@@ -923,24 +1035,28 @@ const closeModalBtn = document.querySelector(".close-modal");
 const sensorName = document.getElementById("modalSensorName");
 const sensorModel = document.getElementById("modalSensorModel");
 const sensorDetect = document.getElementById("modalSensorDetect");
-const sensorThresholds = document.getElementById("modalSensorThresholds");
+const thresholdDanger = document.getElementById("modal-threshold-danger");
+const thresholdWarning = document.getElementById("modal-threshold-warning");
+const thresholdIdeal = document.getElementById("modal-threshold-ideal");
+const thresholdOver = document.getElementById("modal-threshold-over");
+const thresholdNotIdeal = document.getElementById("modal-threshold-not-ideal");
 
 infoButtons.forEach(button => {
     button.addEventListener("click", () => {
         const sensorKey = button.getAttribute("data-sensor");
-        const data = sensorDetails[sensorKey];
+        const data = sensorInfo[sensorKey];
 
         if (data) {
             sensorName.textContent = data.name;
             sensorModel.textContent = data.model;
             sensorDetect.textContent = data.detects;
 
-            // Ayusin ang thresholds gamit ang tamang template literal
-            const thresholdList = data.thresholds.map(thresh =>
-                `<li><strong>${thresh.level}:</strong> ${thresh.range}</li>`
-            ).join("");
-
-            sensorThresholds.innerHTML = `<p><strong>Thresholds:</strong></p><ul>${thresholdList}</ul>`;
+            // Set threshold values
+            thresholdDanger.textContent = data.thresholds.danger || "";
+            thresholdWarning.textContent = data.thresholds.warning || "--";
+            thresholdIdeal.textContent = data.thresholds.ideal || "--";
+            thresholdOver.textContent = data.thresholds.over || "--";
+            thresholdNotIdeal.textContent = data.thresholds.notIdeal || "--";
 
             modal.style.display = "block";
         }
@@ -956,6 +1072,96 @@ window.addEventListener("click", (e) => {
         modal.style.display = "none";
     }
 });
+
+const sensorThresholds = {
+  temperature: {
+    thresholds: {
+      danger: val => val > 30 || val < 15,
+      warning: val => (val >= 28 && val <= 30) || (val >= 15 && val < 18),
+      ideal: val => val >= 20 && val <= 26,
+      over: val => val > 26 && val < 28,
+      notIdeal: val => val >= 18 && val < 20
+    }
+  },
+  ph: {
+    thresholds: {
+      danger: val => val < 5.5 || val > 8.5,
+      warning: val => (val >= 5.5 && val < 6.0) || (val > 8.0 && val <= 8.5),
+      ideal: val => val >= 6.5 && val <= 7.5,
+      over: val => val > 7.5 && val <= 8.0,
+      notIdeal: val => val >= 6.0 && val < 6.5
+    }
+  },
+  tds: {
+    thresholds: {
+      danger: val => val > 1000 || val < 200,
+      warning: val => (val >= 200 && val < 300) || (val > 800 && val <= 1000),
+      ideal: val => val >= 300 && val <= 600,
+      over: val => val > 600 && val <= 800,
+      notIdeal: val => false
+    }
+  },
+  oxygen: {
+    thresholds: {
+      danger: val => val < 3 || val > 10,
+      warning: val => (val >= 3 && val < 4) || (val > 9 && val <= 10),
+      ideal: val => val >= 6 && val <= 8,
+      over: val => val > 8 && val <= 9,
+      notIdeal: val => val >= 4 && val < 6
+    }
+  },
+  turbidity: {
+    thresholds: {
+      danger: val => val > 50,
+      warning: val => val > 30 && val <= 50,
+      ideal: val => val >= 0 && val <= 10,
+      over: val => val > 10 && val <= 20,
+      notIdeal: val => val > 20 && val <= 30
+    }
+  }
+};
+
+function updateSensor(sensorKey, value, unit = '') {
+  const displayId = sensorKey === 'temperature' ? 'temperature' : sensorKey;
+  const valueElem = document.getElementById(displayId);
+  const statusElem = document.getElementById(`status-${sensorKey}`);
+  if (!valueElem || !statusElem) return;
+
+  valueElem.innerText = `${value} ${unit}`;
+  const thresholds = sensorThresholds[sensorKey].thresholds;
+
+  let statusLabel = '';
+  let statusClass = '';
+
+  if (thresholds.danger(value)) {
+    statusLabel = 'Danger';
+    statusClass = 'status-danger';
+  } else if (thresholds.warning(value)) {
+    statusLabel = 'Warning';
+    statusClass = 'status-warning';
+  } else if (thresholds.ideal(value)) {
+    statusLabel = 'Ideal';
+    statusClass = 'status-ideal';
+  } else if (thresholds.over(value)) {
+    statusLabel = 'Over Ideal';
+    statusClass = 'status-over';
+  } else if (thresholds.notIdeal(value)) {
+    statusLabel = 'Not Ideal';
+    statusClass = 'status-notIdeal';
+  } else {
+    statusLabel = 'Unknown';
+    statusClass = '';
+  }
+
+  statusElem.className = `stat-status ${statusClass}`;
+  statusElem.innerText = statusLabel;
+}
+updateSensor('turbidity', 2, 'NTU');
+updateSensor('tds', 500, 'ppm');
+updateSensor('temperature', 22, '°C');
+updateSensor('ph', 8);
+updateSensor('oxygen', 3.4, 'mg/L');
+
 const deviceStates = {
     feeder: false,
     waterPump: false,
@@ -1022,7 +1228,7 @@ function toCamelCase(text) {
           // Update stat cards with latest readings
           const latest = data.latest;
           updateDashboardValue("temperature", latest.temperature, " °C");
-          updateDashboardValue("tds", latest.tds);
+          updateDashboardValue("tds", latest.tds, " ppm");
           updateDashboardValue("turbidity", latest.turbidity, " NTU");
           updateDashboardValue("ph", latest.ph);
           updateDashboardValue("oxygen", latest.oxygen, " mg/L");
